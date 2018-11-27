@@ -9,26 +9,33 @@ import Network
 defmodule Bitcoin do
 	@moduledoc """
 	Documentation for Bitcoin.
+	Functionalities implemented:
+		- Create a Network to maintain Wallets, Transactions, and the Blockchain.
+		- Generate <numOfWallets> Wallets, who start Mining asynchronously.
+		- Mining involves performing Proof Of Work, creating a Coinbase Transaction, adding it to the new Block to be added to the Blockchain in case of successful Mining.
+		- Transfer BTC to and from random Wallets by creating Transactions and updating the respective Wallet states.
+		- Update and validate the Blockchain.
 	"""
 
 	@doc """
 	Main
+	The System can be configured using two input parameters:
+		numOfWallets -  the number of wallets in the Bitcoin network 
+		numOfTransactions - the number of random Transactions to be made between wallets.
 	"""
 	def main do
 		IO.puts ""
 		IO.puts ""
 		IO.puts ""
+		[numOfWallets,numOfTransactions] = ["5","10"]
+		{numOfWallets, _} = Integer.parse(numOfWallets)
+		{numOfTransactions, _} = Integer.parse(numOfTransactions)
 		networkId = generateNetwork()
 		IO.puts "Network created..."
-
+		
 		transactionId = genesisTransaction()
 		# IO.puts transactionId
 		IO.puts "Genesis transaction created..."
-
-
-		# Initialize a ets table to store a global count for each Node
-		# table = :ets.new(:table, [:named_table,:public])
-		# :ets.insert(table, {"globalNodeCount",0})
 
 
 		# blockId=startBlock()
@@ -40,16 +47,16 @@ defmodule Bitcoin do
 		
 
 		# Create wallets
-		numWallets = 10
-		walletPublicKeyList = Enum.map(1..numWallets, fn(x) -> 
+		
+		walletPublicKeyList = Enum.map(1..numOfWallets, fn(x) -> 
 			generateWallet(x, blockchain, networkId)
 		end)
 
-		allWalletIds = Enum.map(0..numWallets-1, fn(x) -> 
+		allWalletIds = Enum.map(0..numOfWallets-1, fn(x) -> 
 			Enum.fetch!(Enum.fetch!(walletPublicKeyList, x), 0)
 		end)
 
-		allPublicKeys = Enum.map(0..numWallets-1, fn(x) -> 
+		allPublicKeys = Enum.map(0..numOfWallets-1, fn(x) -> 
 			Enum.fetch!(Enum.fetch!(walletPublicKeyList, x), 1)
 		end)
 
@@ -57,16 +64,16 @@ defmodule Bitcoin do
 
 		
 
-		Enum.each(0..numWallets-1, fn(x) -> 
+		Enum.each(0..numOfWallets-1, fn(x) -> 
 			wId =  Enum.fetch!(Enum.fetch!(walletPublicKeyList, x), 0)
 			updateWalletPublicKeys(wId, allPublicKeys)
 			# IO.inspect :calendar.local_time()
 			Task.start(Bitcoin,:mining,[wId])
 		end)
 
-
-		:timer.sleep(10000)	
-		Enum.each(1..10,fn(x)-> 
+		IO.puts("\nMining in progress...\n")
+		:timer.sleep(1000*numOfWallets)	
+		Enum.each(1..numOfTransactions,fn(x)-> 
 			[sender,receiver] = Enum.take_random(allWalletIds,2)
 			amountToSend = 7.5
 			IO.puts "Transaction #{x} :"
@@ -78,11 +85,9 @@ defmodule Bitcoin do
 				getWalletBalance(y)
 			end)
 			IO.puts("-----------------------------")
-			# getWalletBalance(Enum.fetchallWalletIds)
-			# getWalletBalance(receiver)
+			
 		end)
-		
-		# waitIndefinitely()
+		:timer.sleep(1)
 
 	end
 
@@ -90,10 +95,13 @@ defmodule Bitcoin do
 	# Basic blockchain functions
 	################################################
 
+	@doc """
+	Block is validated before adding it to the blockchain by the wallet by checking the following
+		- The Index of the new Block = 1 + Index of the last block of Blockchain
+		- Hash of the last block of Blockchain  == PrevHash of the new Block
+		- Recalculate the Hash of the new block and check if it matches.
 
-
-
-
+	"""
 	def isBlockValid(newBlockId, oldBlockId) do
 		{oldBlockIndex, oldBlockTime, oldBlockHash, oldBlockPrevHash, oldBlocktransactions, oldBlockLength, oldBlockMerkleRoot} = getBlockState(oldBlockId)
 		{newBlockIndex, newBlockTime,  newBlockHash, newBlockPrevHash, newBlocktransactions, newBlockLength, newBlockMerkleRoot} = getBlockState(newBlockId)
@@ -117,15 +125,17 @@ defmodule Bitcoin do
 		
 	end
 
-	def replaceChain(newBlocks) do
-		# if len(newBlocks) > len(Blockchain) do
-		#   Blockchain = newBlocks
-		# end
-	end
 
-	################################################
-	# Mining
-	################################################
+	@doc """
+	Mining
+
+		# Performs Bitcoin mining for the walletId sent in the input. 
+		# Gets the latest blockchain from the network and updates the current version of the blockchain maintained by the wallet. 
+		# Using the hash of the last block on the blockchain, a random nonce value is appended to the hash and this new string is hashed again. 
+		# If we get a hash with the required target leading 0s, we have managed to mine a bitcoin successfully. 
+		# In this case, we create a coinbase transaction, add it to a block and add this block to the blockchain and the new blockchain is updated in the network. 
+		# If the hash does not contain the required target leading 0s, we call the same function recursively again for the same walletId.
+	"""
 	def mining(walletId) do
 		{name, publicKey, privateKey, allPublicKeys, uTransactions, allTransactions, blockchain, target, networkId, walletBalance} = getWalletState(walletId)
 		
@@ -141,10 +151,8 @@ defmodule Bitcoin do
 		newValueHash = blockHash <> nonce
 		newHash = generateHash(newValueHash)
 		if (String.slice(newHash, 0..target) == String.duplicate("0", target+1)) do
-			#  create a new block
-			# IO.inspect :calendar.local_time()
-			# IO.puts nonce
-			# create acoinbase transaction
+			# create a new block
+			# create a Coinbase transaction
 			# inputHash, inputSignature, inputPublicKey
 			coinBaseTransactionInputs = [
 				[
@@ -183,17 +191,10 @@ defmodule Bitcoin do
 				# create a new transaction for bitcoin reward
 				# add it to transaction pool
 
-				# System.halt(0);
-				# isBlockValid(blockId)
-
-
-
-
 				updateWalletUnusedTransactions(walletId, coinBaseTransactionId,blockReward)
 				{name, publicKey, privateKey, allPublicKeys, uTransactions, allTransactions, blockchain, target, networkId, walletBalance} = getWalletState(walletId)
 				
 				IO.puts "Bitcoin mined successfully!"
-				# IO.inspect {name, publicKey, privateKey, allPublicKeys, uTransactions, allTransactions, blockchain, target, networkId, walletBalance}
 
 				getWalletBalance(walletId)
 			else
@@ -212,4 +213,4 @@ defmodule Bitcoin do
 
 end
 
-Bitcoin.main()
+# Bitcoin.main()

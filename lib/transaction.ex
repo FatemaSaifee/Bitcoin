@@ -3,6 +3,12 @@ import Wallet
 import Network
 defmodule Transaction do
 
+    @doc """
+    Generates the first transaction in the Bitcoin System. This transaction is later used in creating a genesis Block. 
+    The genesis transaction does not contain any input transactions. 
+    It contains one output field whose value is 50 BTC and public key to which this is sent is “1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa”.
+    It is said to be the public key address of creator of Bitcoin, Satoshi Nakamoto. It is never used for any further transactions.
+    """
     def genesisTransaction do
         # genesisString = "The Times 03/Jan/2009 Chancellor on brink of second bailout for banks"
         tId = startTransaction()
@@ -10,13 +16,13 @@ defmodule Transaction do
         # Input = []
         # output = [
         #     [
-        #         100,
-        #         generateHash("")
+        #         50,
+        #         generateHash("1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa")
         #     ]
         # ]
         # locktime = time()
         updateInput(tId, [])
-        updateOutput(tId, [[100, generateHash("")]])
+        updateOutput(tId, [[50, generateHash("1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa")]])
         transactionHash = createTxHash(tId)
         updateTxHash(tId, transactionHash)
         # IO.puts "Transaction HAsh" <> transactionHash
@@ -24,8 +30,17 @@ defmodule Transaction do
         tId
     end
 
-    # inputs = [[inputHash, inputSignature, inputPublicKey]...],
-    # outputs = [[outputValue, ouputPublicKey]] 
+
+    @doc """
+    Generates the first transaction in the Bitcoin System. This transaction can be later used in creating a genesis Block.
+    The Transaction Arguments will have the State structure as:
+        # inputs = [[inputHash, inputSignature, inputPublicKey]...],
+        # outputs = [[outputValue, ouputPublicKey]] 
+    Example
+        iex> Transaction.generateTransaction() 
+    Output
+        #PID<0.100.0>  // Transaction ID
+    """
     def generateTransaction(inputs, outputs) do
         tId = startTransaction()
         updateInput(tId, inputs)
@@ -39,7 +54,21 @@ defmodule Transaction do
     end
 
 
-
+    @doc """
+    Create a sender to receiver transaction. Main features of this transaction are:
+        - Get the wallet states of sender and receiver
+        - Select unusedTransactions from sender wallet sufficient for the amount to transfer
+        - Generate outputs depending on whether the total value of input transactions is greater than the <amount> or not.
+        - Update Network TransactionPool.
+        - Update sender's Wallet for UnusedTransactions
+        - Updatereceiver's Wallet for UnusedTransactions
+    The argument is as follows:
+        - Sender -  PID of the wallet of the sender
+        - Receiver - PID of the wallet of the receiver
+        - Amount - Number of BTC to be transferred
+    Example
+        iex> Transaction.createWalletToWalletTx(#PID<0.100.0, #PID<0.101.0, 20.00) 
+    """
     def createWalletToWalletTx(sender,receiver,amount) do
         
 
@@ -103,7 +132,9 @@ defmodule Transaction do
 
     end
 
-
+    @doc """
+    Select unusedTransactions from sender wallet sufficient for the amount to transfer
+    """
     def getRequiredInputs(walletPublicKey, uTransactions,amount,finalList \\ [],i \\ 0) do
         if(i < length(uTransactions)) do
             x = Enum.fetch!(uTransactions, i)
@@ -131,37 +162,9 @@ defmodule Transaction do
             {[],-1}
         end
 
-            # if(amount>0) do
-            
-            #     # Enum.map(uTransactions, fn(x) -> 
-            #     x = Enum.fetch!(uTransactions, i)
-            #         {_, _, outputs, _, _ } = getTxState(x)
-            #         Enum.map(outputs,fn(y) ->
-
-            #             if(Enum.fetch!(y,0)>=amount)
-            #                 finalList = finalList ++  [x]
-            #                 # amount = amount - Enum.fetch!(y,0)
-            #             else
-            #                 finalList = finalList ++ [x]
-            #                 amount = amount - Enum.fetch!(y,0)
-            #                 getRequiredInputs(uTransactions,amount,finalList,i+1)
-            #             end
-            #         end)
-            #     # end)
-            # else
-
-            # end
-
-
     end
 
     @doc """
-        # flag
-        # witnesses
-        # in-count
-        # out-count
-        # header
-
         flag - unused
         input []
             - HAsh of prev trx

@@ -7,7 +7,7 @@ defmodule Network do
 
   @doc """
 
-  ## Block Structue
+  ## Network State Structue
     blockchain:   List of block IDs - blockchain
     transactions: List of unconfirmed transactions in the transaction pool
     walletIdPublicKeysMap:  Map of all wallet ids and their public keys in the network
@@ -75,7 +75,3 @@ defmodule Network do
   end
 
 end
-
-
-# Topologies.main()
-# Topologies.waitIndefinitely()

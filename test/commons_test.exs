@@ -4,6 +4,9 @@ defmodule CommonsTest do
 
     @tag :validateHashLength
     test "Hash Length Valid" do
+        IO.puts ""
+        IO.puts "Is hash length 64?"
+        IO.puts String.length(Commons.generateHash("a")) == 64
         assert String.length(Commons.generateHash("a")) == 64
     end
 
