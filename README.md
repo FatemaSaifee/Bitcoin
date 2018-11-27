@@ -120,7 +120,7 @@ Example
         iex> mining(PID<0.100.0>)
 ```
 
-8. createWalletToWalletTx(sender,receiver,amount) 
+8. **createWalletToWalletTx(sender,receiver,amount)**
 Create a sender to receiver transaction. Main features of this transaction are:
   * Get the wallet states of sender and receiver
   * Select unusedTransactions from sender wallet sufficient for the amount to transfer
@@ -226,6 +226,7 @@ Transaction 1:
    Sending 7.5 BTC from Wallet# 5 ---> Wallet# 2
 All wallet balances after transaction 1
 
+-----------------------------
 | WALLET ID     |  BALANCE  |
 |---------------|-----------|
 | Wallet# 1     |  12.5 BTC |
@@ -233,11 +234,13 @@ All wallet balances after transaction 1
 | Wallet# 3     |  12.5 BTC |
 | Wallet# 4     |  12.5 BTC |
 | Wallet# 5     |  5.0 BTC  |
+-----------------------------
 
 Transaction 2:
    Sending 7.5 BTC from Wallet# 1 ---> Wallet# 3
 All wallet balances after transaction 2
 
+-----------------------------
 | WALLET ID     |  BALANCE  |
 |---------------|-----------|
 | Wallet# 1     |  5.0 BTC  |
@@ -245,11 +248,13 @@ All wallet balances after transaction 2
 | Wallet# 3     |  20.0 BTC |
 | Wallet# 4     |  12.5 BTC |
 | Wallet# 5     |  5.0 BTC  |
+-----------------------------
 
 Transaction 3:
    Sending 7.5 BTC from Wallet# 3 ---> Wallet# 5
 All wallet balances after transaction 3
 
+-----------------------------
 | WALLET ID     |  BALANCE  |
 |---------------|-----------|
 | Wallet# 1     |  5.0 BTC  |
@@ -257,11 +262,13 @@ All wallet balances after transaction 3
 | Wallet# 3     |  12.5 BTC |
 | Wallet# 4     |  12.5 BTC |
 | Wallet# 5     |  12.5 BTC |
+-----------------------------
 
 Transaction 4:
    Sending 7.5 BTC from Wallet# 3 ---> Wallet# 1
 All wallet balances after transaction 4
 
+-----------------------------
 | WALLET ID     |  BALANCE  |
 |---------------|-----------|
 | Wallet# 1     |  12.5 BTC |
@@ -269,11 +276,13 @@ All wallet balances after transaction 4
 | Wallet# 3     |  5.0 BTC  |
 | Wallet# 4     |  12.5 BTC |
 | Wallet# 5     |  12.5 BTC |
+-----------------------------
 
 Transaction 5:
    Sending 7.5 BTC from Wallet# 2 ---> Wallet# 5
 All wallet balances after transaction 5
 
+-----------------------------
 | WALLET ID     |  BALANCE  |
 |---------------|-----------|
 | Wallet# 1     |  12.5 BTC |
@@ -281,11 +290,13 @@ All wallet balances after transaction 5
 | Wallet# 3     |  5.0 BTC  |
 | Wallet# 4     |  12.5 BTC |
 | Wallet# 5     |  20.0 BTC |
+-----------------------------
 
 Transaction 6:
    Sending 7.5 BTC from Wallet# 1 ---> Wallet# 3
 All wallet balances after transaction 6
 
+-----------------------------
 | WALLET ID     |  BALANCE  |
 |---------------|-----------|
 | Wallet# 1     |  5.0 BTC  |
@@ -293,11 +304,13 @@ All wallet balances after transaction 6
 | Wallet# 3     |  12.5 BTC |
 | Wallet# 4     |  12.5 BTC |
 | Wallet# 5     |  20.0 BTC |
+-----------------------------
 
 Transaction 7:
    Sending 7.5 BTC from Wallet# 4 ---> Wallet# 5
 All wallet balances after transaction 7
 
+-----------------------------
 | WALLET ID     |  BALANCE  |
 |---------------|-----------|
 | Wallet# 1     |  5.0 BTC  |
@@ -305,11 +318,13 @@ All wallet balances after transaction 7
 | Wallet# 3     |  12.5 BTC |
 | Wallet# 4     |  5.0 BTC  |
 | Wallet# 5     |  27.5 BTC |
+-----------------------------
 
 Transaction 8:
    Sending 7.5 BTC from Wallet# 3 ---> Wallet# 5
 All wallet balances after transaction 8
 
+-----------------------------
 | WALLET ID     |  BALANCE  |
 |---------------|-----------|
 | Wallet# 1     |  5.0 BTC  |
@@ -317,11 +332,13 @@ All wallet balances after transaction 8
 | Wallet# 3     |  5.0 BTC  |
 | Wallet# 4     |  5.0 BTC  |
 | Wallet# 5     |  35.0 BTC |
+-----------------------------
 
 Transaction 9:
    Sending 7.5 BTC from Wallet# 5 ---> Wallet# 3
 All wallet balances after transaction 9
 
+-----------------------------
 | WALLET ID     |  BALANCE  |
 |---------------|-----------|
 | Wallet# 1     |  5.0 BTC  |
@@ -329,12 +346,14 @@ All wallet balances after transaction 9
 | Wallet# 3     |  12.5 BTC |
 | Wallet# 4     |  5.0 BTC  |
 | Wallet# 5     |  27.5 BTC |
+-----------------------------
 
 Transaction 10:
    Sending 7.5 BTC from Wallet# 1 ---> Wallet# 5
 Oops! Not enough Bitcoins
 All wallet balances after transaction 10
 
+-----------------------------
 | WALLET ID     |  BALANCE  |
 |---------------|-----------|
 | Wallet# 1     |  5.0 BTC  |
@@ -342,9 +361,170 @@ All wallet balances after transaction 10
 | Wallet# 3     |  12.5 BTC |
 | Wallet# 4     |  5.0 BTC  |
 | Wallet# 5     |  27.5 BTC |
+-----------------------------
 
 
 ```
+
+## Testing
+
+For testing the features of Bitcoin System we use Elixir’s built-in test framework called **ExUnit**.
+
+
+Instructions
+
+### Input
+```
+	iex> mix test
+```
+### Output
+```
+Testing Bitcoin...
+Nonce: iMh6Jci9vX
+Bitcoin mined successfully!
+| Wallet# 1     |  12.5 BTC |
+Nonce: AyVluLUMMq
+Bitcoin mined successfully!
+| Wallet# 2     |  12.5 BTC |
+Creating wallet to wallet transaction
+   Sending 10 BTC from Wallet# 1 ---> Wallet# 2
+senderBalanceBefore - amount = senderBalanceAfter?
+true
+receiverBalanceBefore + amount = receiverBalanceAfter?
+true
+.Testing Bitcoin...
+Nonce: 5gsn3QgF0L
+Bitcoin mined successfully!
+| Wallet# 1     |  12.5 BTC |
+Nonce: AyVluLUMMq
+Bitcoin mined successfully!
+| Wallet# 2     |  12.5 BTC |
+
+
+C19BD9C5BC47F08DAF9B28A9AAE107A12710FB1C5A8EC1EBB2ACF4BC90BB2E06
+C19BD9C5BC47F08DAF9B28A9AAE107A12710FB1C5A8EC1EBB2ACF4BC90BB2E06
+hash of previous block == previous hash of current block?
+.Testing Bitcoin...
+Nonce: BvNyozOAsp
+Bitcoin mined successfully!
+| Wallet# 1     |  12.5 BTC |
+Nonce: AyVluLUMMq
+Bitcoin mined successfully!
+| Wallet# 2     |  12.5 BTC |
+
+
+Checking balance of wallet 1 after mining is greater than 0
+true
+Checking balance of wallet 2 after mining is greater than 0
+true
+.
+Is hash length 64?
+true
+..
+Is network alive?
+true
+..
+
+Finished in 15.5 seconds
+7 tests, 0 failures
+
+Randomized with seed 638000
+```
+
+### Test cases
+
+#### BitcoinTest
+
+1. test "Mining"
+   "Checking balance of wallet 1 after mining is greater than 0"
+```elixir
+   	assert senderBalanceBefore > 0
+   "Checking balance of wallet 2 after mining is greater than 0"
+   	assert receiverBalanceBefore > 0
+```
+
+2. test "Wallet to Wallet transaction"
+   "senderBalanceBefore - amount = senderBalanceAfter?"
+```elixir
+assert 12.5 - amount == senderBalanceAfter
+```
+   "receiverBalanceBefore + amount = receiverBalanceAfter?"
+```elixir
+assert 12.5 + amount == receiverBalanceAfter
+```
+
+3. test "validate block added to blockhain"
+   "hash of previous block == previous hash of current block?"
+```elixir
+assert prevHash == hash
+```
+
+#### CommonsTest
+
+4. test "Hash Length Valid"
+   “Length of hash value returned == 64?”
+```elixir
+assert String.length(Commons.generateHash("a")) == 64
+```
+
+5. test "Merkle Root Valid"
+   “When input hash list length == 1”
+```elixir
+assert Commons.merkle_tree_hash([Commons.generateHash("a")]) == Commons.generateHash("a")
+```
+
+   “When input hash list length == even”
+```elixir
+assert Commons.merkle_tree_hash([Commons.generateHash("a") , Commons.generateHash("b")]) == Commons.generateHash(Commons.generateHash("a")<>Commons.generateHash("b"))
+```elixir
+
+   “When input hash list length == odd”
+```elixir
+assert Commons.merkle_tree_hash([Commons.generateHash("a") , Commons.generateHash("b"),Commons.generateHash("c")]) == Commons.generateHash(Commons.generateHash(Commons.generateHash("a")<>Commons.generateHash("b"))<>Commons.generateHash(Commons.generateHash("c")<>Commons.generateHash("c")))
+```
+
+#### GenerateRandomStringTest
+
+6. test "Random string nonce Length Valid"
+   “Length of random nonce string generated is valid”
+```elixir
+assert String.length(GenerateRandomString.randomizer(5)) == 5
+```
+
+#### NetworkTest
+
+7. test "Network is Alive"
+   “Network exists and network id is not nil”
+```elixir
+assert context[:networkId] != nil
+```
+
+
+## Bonus Features
+
+1. **Genesis Transaction**
+Generates the first transaction in the Bitcoin System. This transaction is later used in creating a genesis Block. 
+The genesis transaction does not contain any input transactions. 
+It contains one output field whose value is 50 BTC and public key to which this is sent is “1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa”. It is said to be the public key address of creator of Bitcoin, Satoshi Nakamoto. It is never used for any further transactions.
+
+2. **Genesis Block**
+Genesis Block is generated which contains the Genesis Transaction and its Merkle root. This Block is used to initialize the Blockchain in the Network.
+
+3. **Block validation while adding to blockchain**
+Block is validated before adding it to the blockchain by the wallet by checking the following
+The Index of the new Block = 1 + Index of the last block of Blockchain
+Hash of the last block of Blockchain  == PrevHash of the new Block
+Recalculate the Hash of the new block and check if it matches.
+
+4. **Merkle root generation**
+While creating Blocks, each of its transaction are first hashed, and the hashes are then paired, hashed, paired again, and hashed again until a single hash remains, the Merkle root of a Merkle tree.
+
+5. **Wallet Balance calculation**
+Wallet Balance is calculated by adding all the amounts in the input List of the Unused Transactions in the wallet, whose public keys match with the Wallet’s Public Key.
+
+6. **Transaction signature generation**
+Transaction Signature is generated with the help of Private key of the wallet initiating the transaction and message describing the transaction. This was done using Elliptic Curve Digital Signature Algorithm.
+
 
 ## Installation
 
